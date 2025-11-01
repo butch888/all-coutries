@@ -5,8 +5,11 @@ const allCountriesBtn = document.getElementById('all-countries-btn');
 const countryModal = document.getElementById('country-modal');
 const countryDetails = document.getElementById('country-details');
 const closeBtn = document.querySelector('.close-btn');
+const counter = document.getElementById('counter');
 
 let countriesData = [];
+let activeLetter = null;
+let alphabetLetters = {}; // Объект для хранения ссылок на все буквы
 
 // Функция для создания алфавита
 function createAlphabet() {
@@ -15,11 +18,60 @@ function createAlphabet() {
   alphabet.forEach(letter => {
     const letterElement = document.createElement('span');
     letterElement.textContent = letter;
+    letterElement.classList.add('alphabet-letter');
+    letterElement.dataset.letter = letter; // Добавляем data-атрибут для удобства
+    
+    // Сохраняем ссылку на элемент буквы
+    alphabetLetters[letter] = letterElement;
+    
     letterElement.addEventListener('click', () => {
+      setActiveLetter(letter);
+      inputSearch.value = letter;
       filterByLetter(letter);
     });
     alphabetContainer.appendChild(letterElement);
   });
+}
+
+// Функция для установки активной буквы
+function setActiveLetter(letter) {
+  // Сбрасываем предыдущую активную букву
+  if (activeLetter) {
+    activeLetter.classList.remove('active');
+  }
+  
+  // Устанавливаем новую активную букву
+  if (letter && alphabetLetters[letter]) {
+    alphabetLetters[letter].classList.add('active');
+    activeLetter = alphabetLetters[letter];
+  } else {
+    activeLetter = null;
+  }
+}
+
+// Функция для сброса активной буквы
+function resetActiveLetter() {
+  if (activeLetter) {
+    activeLetter.classList.remove('active');
+    activeLetter = null;
+  }
+}
+
+// Функция для обновления активной буквы на основе ввода
+function updateActiveLetterFromInput(searchTerm) {
+  if (searchTerm.trim() === '') {
+    resetActiveLetter();
+    return;
+  }
+  
+  const firstLetter = searchTerm.charAt(0).toUpperCase();
+  
+  // Проверяем, является ли первая буква допустимой буквой алфавита
+  if (alphabetLetters[firstLetter]) {
+    setActiveLetter(firstLetter);
+  } else {
+    resetActiveLetter();
+  }
 }
 
 // Функция для фильтрации по букве
@@ -36,10 +88,12 @@ function displayCountries(countries) {
 
   if (countries.length === 0) {
     app.innerHTML = '<div class="error">No countries found</div>';
+    counter.textContent = `All countries: 0`;
     return;
   }
 
   countries.forEach((country) => {
+    counter.textContent = `All countries: ${countries.length}`;
     const countryElement = document.createElement('div');
     countryElement.classList.add('country-card');
     countryElement.innerHTML = `
@@ -99,6 +153,9 @@ function closeModal() {
 
 // Функция для фильтрации стран
 function filterCountries(searchTerm) {
+  // Обновляем активную букву на основе ввода
+  updateActiveLetterFromInput(searchTerm);
+  
   const filteredCountries = countriesData.filter(country => 
     country.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -111,6 +168,7 @@ inputSearch.addEventListener('input', (e) => {
 });
 
 allCountriesBtn.addEventListener('click', () => {
+  resetActiveLetter();
   displayCountries(countriesData);
   inputSearch.value = '';
 });

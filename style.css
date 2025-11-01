@@ -84,6 +84,13 @@ header h1 {
   transform: translateY(-2px);
 }
 
+.alphabet span.active {
+  background: #4CAF50 !important;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
 .all-countries-btn {
   background: #ff6b6b;
   color: white;
