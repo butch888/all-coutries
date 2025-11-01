@@ -9,7 +9,7 @@ const counter = document.getElementById('counter');
 
 let countriesData = [];
 let activeLetter = null;
-let alphabetLetters = {}; // Объект для хранения ссылок на все буквы
+let alphabetLetters = {};
 
 // Функция для создания алфавита
 function createAlphabet() {
@@ -19,9 +19,8 @@ function createAlphabet() {
     const letterElement = document.createElement('span');
     letterElement.textContent = letter;
     letterElement.classList.add('alphabet-letter');
-    letterElement.dataset.letter = letter; // Добавляем data-атрибут для удобства
+    letterElement.dataset.letter = letter;
     
-    // Сохраняем ссылку на элемент буквы
     alphabetLetters[letter] = letterElement;
     
     letterElement.addEventListener('click', () => {
@@ -66,7 +65,6 @@ function updateActiveLetterFromInput(searchTerm) {
   
   const firstLetter = searchTerm.charAt(0).toUpperCase();
   
-  // Проверяем, является ли первая буква допустимой буквой алфавита
   if (alphabetLetters[firstLetter]) {
     setActiveLetter(firstLetter);
   } else {
@@ -89,6 +87,8 @@ function displayCountries(countries) {
   if (countries.length === 0) {
     app.innerHTML = '<div class="error">No countries found</div>';
     counter.textContent = `All countries: 0`;
+    // Сбрасываем активную букву когда нет стран
+    resetActiveLetter();
     return;
   }
 
